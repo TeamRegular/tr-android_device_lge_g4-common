@@ -78,7 +78,7 @@ BOARD_HAVE_BLUETOOTH_BCM := true
 BOARD_BLUEDROID_VENDOR_CONF := device/lge/g4-common/bluetooth/libbt_vndcfg.txt
 
 # CMHW
-#BOARD_HARDWARE_CLASS += device/lge/g4-common/cmhw
+BOARD_HARDWARE_CLASS += device/lge/g4-common/cmhw
 
 # Display
 MAX_EGL_CACHE_KEY_SIZE := 12*1024
