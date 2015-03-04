@@ -82,9 +82,6 @@ BOARD_BLUEDROID_VENDOR_CONF := device/lge/g4-common/bluetooth/libbt_vndcfg.txt
 # CMHW
 #BOARD_HARDWARE_CLASS += device/lge/g4-common/cmhw
 
-# Crypto
-#TARGET_HW_DISK_ENCRYPTION := true
-
 # Display
 MAX_EGL_CACHE_KEY_SIZE := 12*1024
 MAX_EGL_CACHE_SIZE := 2048*1024
