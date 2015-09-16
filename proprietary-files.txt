@@ -63,6 +63,7 @@ bin/mm-qcamera-daemon
 lib/hw/camera.msm8992.so
 lib/libarcsoft_beauty_shot.so
 lib/libHDR.so
+lib/liblgmda.so
 lib/libmm-qcamera.so
 lib/libmmcamera_interface.so
 lib/libmmjpeg_interface.so
