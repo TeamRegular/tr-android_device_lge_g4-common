@@ -379,6 +379,13 @@ on post-fs-data
     mkdir /data/system/perfd 0770 root system
     chmod 2770 /data/system/perfd
 
+    # Create directory used by sensor subsystem
+    mkdir /persist/sensors 0775 system root
+    chmod 0664 /persist/sensors/sensors_settings
+    chown system root /persist/sensors/sensors_settings
+    mkdir /data/misc/sensors 0775 system system
+    restorecon_recursive /data/misc/sensors
+
     mkdir /data/tombstones 0771 system system
     mkdir /tombstones/modem 0771 system system
     mkdir /tombstones/lpass 0771 system system
@@ -432,7 +439,6 @@ service sensors /system/bin/sensors.qcom
     class core
     user root
     group root
-    disabled
 
 on property:ro.use_data_netmgrd=false
     # netmgr not supported on specific target
@@ -522,11 +528,6 @@ service dhcpcd_bnep4 /system/bin/dhcpcd -BKLG
     disabled
     oneshot
 
-service qcom-sh /system/bin/sh /init.qcom.sh
-    class late_start
-    user root
-    oneshot
-
 service qcom-post-boot /system/bin/sh /system/etc/init.qcom.post_boot.sh
     class main
     user root
@@ -568,7 +569,6 @@ service msm_irqbalance /system/bin/msm_irqbalance -f /system/vendor/etc/msm_irqb
     class core
     user root
     group root
-    disabled
 
 # start camera server as daemon
 service qcamerasvr /system/bin/mm-qcamera-daemon
