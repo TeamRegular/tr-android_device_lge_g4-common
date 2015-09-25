@@ -31,8 +31,8 @@
     <bit_width_configs>
         <device name="SND_DEVICE_OUT_SPEAKER" bit_width="24"/>
     </bit_width_configs>
-    <pcm_ids>
+    <!-- pcm_ids>
         <usecase name="USECASE_AUDIO_3RDP_SPKR_PROT_TX" type="in" id="81"/>
-    </pcm_ids>
+    </pcm_ids -->
 </audio_platform_info>
 
