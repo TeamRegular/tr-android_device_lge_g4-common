@@ -197,10 +197,8 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     fstab.qcom \
     init.qcom.post_boot.sh \
-    init.qcom.power.rc \
     init.qcom.rc \
     init.qcom.usb.rc \
-    init.recovery.qcom.rc \
     ueventd.qcom.rc
 
 # RIL

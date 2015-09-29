@@ -26,7 +26,6 @@
 #
 
 import init.qcom.usb.rc
-import init.qcom.power.rc
 
 on early-init
     mount debugfs debugfs /sys/kernel/debug
@@ -40,7 +39,6 @@ on init
 
     mkdir /persist-lg 0771 system system
     mkdir /sns 0775 system system
-    mkdir /mpt 0775 system system
 
     # See storage config details at http://source.android.com/tech/storage/
     mkdir /mnt/shell/emulated 0700 shell shell
@@ -76,33 +74,12 @@ on fs
 on early-boot
     # set RLIMIT_MEMLOCK to 64MB
     setrlimit 8 67108864 67108864
-    # Allow subsystem (modem etc) debugging
-    write /sys/module/subsystem_restart/parameters/enable_debug ${persist.sys.ssr.enable_debug}
-    write /sys/module/pil_msa/parameters/pbl_mba_boot_timeout_ms ${persist.sys.mba_boot_timeout}
-    write /sys/module/pil_msa/parameters/modem_auth_timeout_ms ${persist.sys.modem_auth_timeout}
-    write /sys/module/peripheral_loader/parameters/proxy_timeout_ms ${persist.sys.pil_proxy_timeout}
+
     write /sys/kernel/boot_adsp/boot 1
 
 on boot
     start rmt_storage
     start rfs_access
-    write /sys/bus/i2c/devices/2-004a/update_fw 1
-    write /sys/bus/i2c/devices/2-004a/update_cfg 1
-    write /sys/bus/i2c/devices/2-0020/input/input0/update_fw 1
-
-    # access permission for secure touch
-    chmod 0660 /sys/devices/soc.0/f9924000.i2c/i2c-2/2-0020/input/input0/secure_touch_enable
-    chmod 0440 /sys/devices/soc.0/f9924000.i2c/i2c-2/2-0020/input/input0/secure_touch
-    chmod 0660 /sys/devices/soc.0/f9924000.i2c/i2c-2/2-004a/secure_touch_enable
-    chmod 0440 /sys/devices/soc.0/f9924000.i2c/i2c-2/2-004a/secure_touch
-    chown system drmrpc /sys/devices/soc.0/f9924000.i2c/i2c-2/2-0020/input/input0/secure_touch_enable
-    chown system drmrpc /sys/devices/soc.0/f9924000.i2c/i2c-2/2-0020/input/input0/secure_touch
-    chown system drmrpc /sys/devices/soc.0/f9924000.i2c/i2c-2/2-004a/secure_touch_enable
-    chown system drmrpc /sys/devices/soc.0/f9924000.i2c/i2c-2/2-004a/secure_touch
-    write /proc/sys/kernel/sched_boost 1
-
-    # improving first Touch response by i2c active
-    write /sys/devices/soc.0/f9924000.i2c/power/control on
 
     chown bluetooth net_bt_stack /sys/class/rfkill/rfkill0/type
     chown bluetooth net_bt_stack /sys/class/rfkill/rfkill0/state
@@ -113,15 +90,8 @@ on boot
     chmod 0660 /proc/bluetooth/sleep/btwake
     chmod 0660 /proc/bluetooth/sleep/proto
     chmod 0660 /proc/bluetooth/sleep/preproto
-    chown bluetooth net_bt_stack /dev/ttyHS99
     chown bluetooth net_bt_stack /dev/ttyHS0
-    chmod 0660 /sys/module/hci_uart/parameters/ath_lpm
-    chmod 0660 /sys/module/hci_uart/parameters/ath_btwrite
-    chmod 0660 /dev/ttyHS99
     chmod 0660 /dev/ttyHS0
-
-    chmod 0660 /dev/ttyHS2
-    chown bluetooth bluetooth /dev/ttyHS2
 
     chown bluetooth net_bt /sys/class/rfkill/rfkill0/device/extldo
     chmod 0660 /sys/class/rfkill/rfkill0/device/extldo
@@ -140,29 +110,12 @@ on boot
 
     setprop wifi.interface wlan0
 
-#   Define TCP buffer sizes for various networks
-#   ReadMin, ReadInitial, ReadMax, WriteMin, WriteInitial, WriteMax,
-    setprop net.tcp.buffersize.wifi    524288,2097152,4194304,262144,524288,1048576
-
     setprop ro.telephony.call_ring.multiple false
 
     # Remove SUID bit for iproute2 ip tool
     chmod 0755 /system/bin/ip
 
     chmod 0444 /sys/devices/platform/msm_hsusb/gadget/usb_state
-
-#   Define TCP buffer sizes for various networks
-#   ReadMin, ReadInitial, ReadMax, WriteMin, WriteInitial, WriteMax,
-    setprop net.tcp.buffersize.default 4096,87380,524288,4096,16384,110208
-    setprop net.tcp.buffersize.lte     2097152,4194304,8388608,262144,524288,1048576
-    setprop net.tcp.buffersize.umts    4094,87380,110208,4096,16384,110208
-    setprop net.tcp.buffersize.hspa    4094,87380,1220608,4096,16384,1220608
-    setprop net.tcp.buffersize.hsupa   4094,87380,1220608,4096,16384,1220608
-    setprop net.tcp.buffersize.hsdpa   4094,87380,1220608,4096,16384,1220608
-    setprop net.tcp.buffersize.hspap   4094,87380,1220608,4096,16384,1220608
-    setprop net.tcp.buffersize.edge    4093,26280,35040,4096,16384,35040
-    setprop net.tcp.buffersize.gprs    4092,8760,11680,4096,8760,11680
-    setprop net.tcp.buffersize.evdo    4094,87380,524288,4096,16384,262144
 
 #   Assign TCP buffer thresholds to be ceiling value of technology maximums
 #   Increased technology maximums should be reflected here.
@@ -202,9 +155,6 @@ on boot
     # NFC local data and nfcee xml storage
     mkdir /data/nfc 0770 nfc nfc
     mkdir /data/nfc/param 0770 nfc nfc
-
-    # Allow access for CCID command/response timeout configuration
-    chown system system /sys/module/ccid_bridge/parameters/bulk_msg_timeout
 
     write /sys/module/lowmemorykiller/parameters/lmk_fast_run 0
 
@@ -282,8 +232,6 @@ on post-fs-data
     mkdir /data/media 0770 media_rw media_rw
     chown media_rw media_rw /data/media
 
-    mkdir /data/misc/ipa 0700 net_admin net_admin
-
     mkdir /data/misc/bluetooth 0770 bluetooth bluetooth
 
     # Create the directories used by the Wireless subsystem
@@ -297,16 +245,6 @@ on post-fs-data
     # Create the directories used by CnE subsystem
     mkdir /data/connectivity 0771 system system
     chown system system /data/connectivity
-
-    # Create the directories used by DPM subsystem
-    mkdir /data/dpm 0771 system system
-    chown system system /data/dpm
-
-    mkdir /data/dpm/fdMgr 0771 system system
-    chown system system /data/dpm/fdMgr
-
-    mkdir /data/dpm/nsrm 0771 system system
-    chown system system /data/dpm/nsrm
 
     # Create directory used by audio subsystem
     mkdir /data/misc/audio 0770 audio audio
@@ -399,9 +337,6 @@ on post-fs-data
 
     chown system system /persist-lg
     chmod 0771 /persist-lg
-
-    chown system system /mpt
-    chmod 0775 /mpt
 
 on property:sys.boot_completed=1
     write /dev/kmsg "Boot completed "
