@@ -149,6 +149,11 @@ PRODUCT_COPY_FILES += \
     frameworks/av/media/libstagefright/data/media_codecs_google_telephony.xml:system/etc/media_codecs_google_telephony.xml \
     frameworks/av/media/libstagefright/data/media_codecs_google_video.xml:system/etc/media_codecs_google_video.xml
 
+# Misc
+PRODUCT_PACKAGES += \
+    libbson \
+    libxml2
+
 # Perf profile
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/perf-profile0.conf:system/vendor/etc/perf-profile0.conf
@@ -200,10 +205,6 @@ PRODUCT_PACKAGES += \
     init.qcom.rc \
     init.qcom.usb.rc \
     ueventd.qcom.rc
-
-# RIL
-PRODUCT_PACKAGES += \
-    libxml2
 
 # Sensor configuration
 PRODUCT_COPY_FILES += \
